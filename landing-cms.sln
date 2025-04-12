@@ -6,6 +6,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "landing-cms.AppHost", "land
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "landing-cms.ServiceDefaults", "landing-cms.ServiceDefaults\landing-cms.ServiceDefaults.csproj", "{7698496E-84E2-F618-D919-1ABA216B9830}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "landing-cms.Client", "landing-cms.Client\landing-cms.Client.esproj", "{C2961D46-3EB5-0439-9366-D70EAF1B3872}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "landing-cms.Server", "landing-cms.Server\landing-cms.Server.csproj", "{FB33AB33-85D8-F6EB-7166-5B0DC6F448C6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +24,16 @@ Global
 		{7698496E-84E2-F618-D919-1ABA216B9830}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7698496E-84E2-F618-D919-1ABA216B9830}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7698496E-84E2-F618-D919-1ABA216B9830}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2961D46-3EB5-0439-9366-D70EAF1B3872}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2961D46-3EB5-0439-9366-D70EAF1B3872}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2961D46-3EB5-0439-9366-D70EAF1B3872}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{C2961D46-3EB5-0439-9366-D70EAF1B3872}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2961D46-3EB5-0439-9366-D70EAF1B3872}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2961D46-3EB5-0439-9366-D70EAF1B3872}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{FB33AB33-85D8-F6EB-7166-5B0DC6F448C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB33AB33-85D8-F6EB-7166-5B0DC6F448C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB33AB33-85D8-F6EB-7166-5B0DC6F448C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB33AB33-85D8-F6EB-7166-5B0DC6F448C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

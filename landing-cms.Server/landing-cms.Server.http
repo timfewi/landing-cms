@@ -1,0 +1,6 @@
+@landing_cms.Server_HostAddress = https://localhost:5000
+
+GET {{landing_cms.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
