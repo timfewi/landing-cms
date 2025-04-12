@@ -1,0 +1,68 @@
+/* Device Preview Controls Styling */
+.device-preview-controls {
+  display: flex;
+  gap: 5px;
+  margin-right: var(--spacing-md);
+  align-items: center;
+}
+
+.device-control-button {
+  background: none;
+  border: 1px solid #dee2e6;
+  border-radius: var(--border-radius);
+  padding: 5px 10px;
+  color: var(--secondary-color);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.device-control-button:hover {
+  background-color: #f8f9fa;
+}
+
+.device-control-button.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.device-buttons {
+  display: flex;
+  gap: 5px;
+}
+.device-buttons .device-control-button {
+  flex: 1;
+}
+
+/* New styles for device button active state */
+.device-buttons .device-control-button.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+/* Refresh button */
+.refresh-button {
+  background: none;
+  border: 1px solid #dee2e6;
+  border-radius: var(--border-radius);
+  padding: 5px 10px;
+  color: var(--secondary-color);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: auto;
+}
+
+.refresh-button:hover {
+  background-color: #f8f9fa;
+}
+
+/* Hilfsklassen */
+.d-flex { display: flex; }
+.align-items-center { align-items: center; }
+.justify-content-between { justify-content: space-between; }
+.controls-container {
+  padding-bottom: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  border-bottom: 1px solid #dee2e6;
+}

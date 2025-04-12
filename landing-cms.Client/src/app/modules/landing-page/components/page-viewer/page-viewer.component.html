@@ -1,0 +1,33 @@
+<div class="page-viewer" [class.preview-mode]="previewMode">
+  <div *ngIf="isLoading" class="loading">
+    <div class="spinner"></div>
+    <p>Lade Seite...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="error">
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <div *ngIf="!page && !isLoading && !errorMessage" class="no-content">
+    <p>Keine Inhalte verfügbar</p>
+  </div>
+
+  <div *ngIf="page && !isLoading" class="page-content">
+    <header class="page-header">
+      <h1 class="page-title">{{ page.title }}</h1>
+      <p *ngIf="page.description" class="page-description">{{ page.description }}</p>
+    </header>
+
+    <div class="sections-container">
+      <ng-container *ngIf="page.sections && page.sections.length > 0">
+        <ng-container *ngFor="let section of page.sections | sortByOrder">
+          <app-section-renderer [section]="section" [previewMode]="previewMode"></app-section-renderer>
+        </ng-container>
+      </ng-container>
+
+      <div *ngIf="!page.sections || page.sections.length === 0" class="no-content">
+        <p>Diese Seite enthält noch keine Sektionen</p>
+      </div>
+    </div>
+  </div>
+</div>

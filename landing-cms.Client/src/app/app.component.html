@@ -1,0 +1,30 @@
+<header class="app-header">
+  <div class="container">
+    <div class="logo">
+      <a routerLink="/">Landing-CMS</a>
+    </div>
+    <nav class="main-nav">
+      <ul>
+        <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>
+        <li *ngIf="authService.isAdmin()"><a routerLink="/admin" routerLinkActive="active">Admin Dashboard</a></li>
+        <li *ngIf="!authService.getCurrentUser()">
+          <button (click)="login()" class="btn btn-login">Login</button>
+        </li>
+        <li *ngIf="authService.getCurrentUser()">
+          <span class="user-welcome">Hallo, {{authService.getCurrentUser()?.username}}</span>
+          <button (click)="logout()" class="btn btn-logout">Logout</button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main class="app-content">
+  <router-outlet></router-outlet>
+</main>
+
+<footer class="app-footer">
+  <div class="container">
+    <p>&copy; 2025 Landing-CMS - Ein einfaches Content Management System für Landing Pages</p>
+  </div>
+</footer>

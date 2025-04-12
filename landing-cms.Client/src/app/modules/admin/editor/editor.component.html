@@ -1,0 +1,187 @@
+<div class="editor-container">
+  <!-- Verbesserte Toolbar mit klarem Speichern und Veröffentlichen-Buttons -->
+  <div class="editor-toolbar">
+    <div class="editor-toolbar-left">
+      <button class="back-button" (click)="navigateBack()">
+        <i class="fas fa-arrow-left"></i> Zurück zur Übersicht
+      </button>
+      <h2 *ngIf="currentPage">{{ currentPage.title }} bearbeiten</h2>
+      <h2 *ngIf="!currentPage">Neue Seite erstellen</h2>
+    </div>
+    <div class="editor-toolbar-right">
+      <span *ngIf="isDirty" class="unsaved-changes">
+        <i class="fa fa-exclamation-circle"></i> Ungespeicherte Änderungen
+      </span>
+      <div class="button-group">
+        <button class="preview-page-button" (click)="onPreviewPage()" title="Vorschau der Seite in neuem Tab öffnen">
+          <i class="fa fa-eye"></i> Vorschau
+        </button>
+        <button class="save-button" (click)="onSave()" [disabled]="!isDirty">
+          <i class="fa fa-save"></i> Speichern
+        </button>
+        <button class="publish-button" (click)="onPublish()" [ngClass]="{'published': currentPage?.isPublished}">
+          <i class="fa" [ngClass]="currentPage?.isPublished ? 'fa-check-circle' : 'fa-upload'"></i>
+          {{ currentPage?.isPublished ? 'Veröffentlicht' : 'Veröffentlichen' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="editor-main-content">
+    <!-- Linke Seitenleiste - Baukasten mit Sektionen und Widgets -->
+    <div class="editor-sidebar left-sidebar">
+      <div class="section-tabs">
+        <button class="tab-button" [class.active]="activeTab === 'sections'" (click)="setActiveTab('sections')">
+          <i class="fa fa-layer-group"></i> Sektionen
+        </button>
+        <button class="tab-button" [class.active]="activeTab === 'widgets'" (click)="setActiveTab('widgets')">
+          <i class="fa fa-puzzle-piece"></i> Widgets
+        </button>
+      </div>
+
+      <!-- Drag-and-Drop Sektion-Liste -->
+      <div class="section-list-container" [style.display]="activeTab === 'sections' ? 'block' : 'none'">
+        <h3>Seitensektionen</h3>
+        <div class="section-drag-info">
+          <i class="fa fa-info-circle"></i> Elemente per Drag & Drop anordnen
+        </div>
+        <app-section-list></app-section-list>
+      </div>
+
+      <!-- Verbesserte Widget-Kategorien und Liste -->
+      <div class="widget-list-container" [style.display]="activeTab === 'widgets' ? 'block' : 'none'">
+        <h3>Widget-Bibliothek</h3>
+        <div class="widget-drag-info">
+          <i class="fa fa-mouse-pointer"></i> Ziehe Widgets in die Vorschau
+        </div>
+        <app-widget-categories (categorySelected)="widgetCategory = $event">
+        </app-widget-categories>
+
+        <app-widget-list [sectionIndex]="selectedSectionIndex">
+        </app-widget-list>
+      </div>
+    </div>
+
+    <!-- Mittlerer Bereich - Interaktive Vorschau -->
+    <div class="editor-preview">
+      <div class="preview-controls">
+        <app-device-preview-controls [mode]="previewMode" [scale]="zoom" (modeChange)="onChangePreviewMode($event)"
+          (scaleChange)="onZoomChanged($event)">
+        </app-device-preview-controls>
+      </div>
+
+      <div class="preview-container" [ngClass]="previewMode">
+        <!-- Drag-and-Drop Zone für Vorschau -->
+        <div class="preview-dropzone" cdkDropList (cdkDropListDropped)="onWidgetDroppedOnPreview($event)">
+          <app-preview-renderer [page]="currentPage" [deviceType]="previewMode" [zoom]="zoom"
+            (sectionSelected)="onSectionSelected($event)"
+            (widgetSelected)="onWidgetSelected($event.sectionIndex, $event.widgetIndex)">`
+          </app-preview-renderer>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rechte Seitenleiste - Eigenschaften mit Tabs -->
+    <div class="editor-sidebar right-sidebar">
+      <div class="properties-panel">
+        <div class="properties-header">
+          <h3>
+            <span
+              *ngIf="selectedSectionIndex === -1 && selectedWidgetData.widgetIndex === -1">Seiteneigenschaften</span>
+            <span
+              *ngIf="selectedSectionIndex !== -1 && selectedWidgetData.widgetIndex === -1">Sektionseinstellungen</span>
+            <span *ngIf="selectedWidgetData.widgetIndex !== -1">Widget-Eigenschaften</span>
+          </h3>
+        </div>
+
+        <!-- Wenn keine Sektion oder Widget ausgewählt ist, Seiteneigenschaften anzeigen -->
+        <div *ngIf="selectedSectionIndex === -1 && selectedWidgetData.widgetIndex === -1" class="page-properties">
+          <div class="property-tabs">
+            <button class="tab-button" [class.active]="pagePropertiesTab === 'basic'"
+              (click)="pagePropertiesTab = 'basic'">
+              Grundlegend
+            </button>
+            <button class="tab-button" [class.active]="pagePropertiesTab === 'seo'" (click)="pagePropertiesTab = 'seo'">
+              SEO
+            </button>
+            <button class="tab-button" [class.active]="pagePropertiesTab === 'advanced'"
+              (click)="pagePropertiesTab = 'advanced'">
+              Erweitert
+            </button>
+          </div>
+
+          <form [formGroup]="getForm()">
+            <!-- Grundlegende Einstellungen -->
+            <div class="tab-content" *ngIf="pagePropertiesTab === 'basic'">
+              <div class="form-group">
+                <label for="title">Seitentitel</label>
+                <input id="title" type="text" formControlName="title" class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="slug">URL-Pfad</label>
+                <div class="input-group">
+                  <span class="input-group-text">/</span>
+                  <input id="slug" type="text" formControlName="slug" class="form-control">
+                </div>
+              </div>
+              <div class="form-group checkbox">
+                <input id="isPublished" type="checkbox" formControlName="isPublished">
+                <label for="isPublished">Veröffentlicht</label>
+              </div>
+            </div>
+
+            <!-- SEO-Einstellungen -->
+            <div class="tab-content" *ngIf="pagePropertiesTab === 'seo'">
+              <div class="form-group">
+                <label for="metaDescription">Meta-Beschreibung</label>
+                <textarea id="metaDescription" formControlName="metaDescription" class="form-control"
+                  rows="3"></textarea>
+                <small class="form-text text-muted">
+                  Empfohlene Länge: 150-160 Zeichen. Aktuelle Länge: {{getForm().get('metaDescription')?.value?.length
+                  || 0}}
+                </small>
+              </div>
+              <div class="form-group">
+                <label for="metaKeywords">Meta-Keywords</label>
+                <input id="metaKeywords" type="text" formControlName="metaKeywords" class="form-control">
+                <small class="form-text text-muted">Komma-getrennte Liste von Schlüsselwörtern</small>
+              </div>
+            </div>
+
+            <!-- Erweiterte Einstellungen -->
+            <div class="tab-content" *ngIf="pagePropertiesTab === 'advanced'">
+              <div class="form-group">
+                <label for="customCss">Benutzerdefiniertes CSS</label>
+                <textarea id="customCss" formControlName="customCss" class="form-control code-editor"
+                  rows="5"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="customJs">Benutzerdefiniertes JavaScript</label>
+                <textarea id="customJs" formControlName="customJs" class="form-control code-editor" rows="5"></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Sektion-Editor mit verbesserten Steuerungselementen -->
+        <app-section-editor *ngIf="selectedSectionIndex !== -1 && selectedWidgetData.widgetIndex === -1"
+          [sectionIndex]="selectedSectionIndex" (deleteSection)="onDeleteSection(selectedSectionIndex)">
+        </app-section-editor>
+
+        <!-- Widget-Editor mit Live-Vorschau -->
+        <app-widget-editor *ngIf="selectedWidgetData.widgetIndex !== -1"
+          [sectionIndex]="selectedWidgetData.sectionIndex" [widgetIndex]="selectedWidgetData.widgetIndex"
+          (deleteWidget)="onDeleteWidget(selectedWidgetData.sectionIndex, selectedWidgetData.widgetIndex)">
+        </app-widget-editor>
+      </div>
+    </div>
+  </div>
+
+  <!-- Benachrichtigungen für Aktionen -->
+  <div class="editor-notifications" *ngIf="notification">
+    <div class="notification" [class]="notification.type">
+      <i class="fas" [ngClass]="getNotificationIcon()"></i>
+      <span>{{notification.message}}</span>
+    </div>
+  </div>
+</div>

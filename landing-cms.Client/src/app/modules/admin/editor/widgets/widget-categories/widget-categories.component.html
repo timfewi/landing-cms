@@ -1,0 +1,69 @@
+<div class="widget-categories-modal">
+  <div class="widget-categories-container">
+    <!-- Header mit Titel und Beschreibung -->
+    <div class="modal-header">
+      <h2 class="section-title">Widget-Auswahl</h2>
+      <p class="header-description">Wählen Sie eine Kategorie und dann ein Widget aus</p>
+    </div>
+
+    <!-- Verbesserte Kategorie-Tabs mit Icons und Labels -->
+    <div class="tabs-header">
+      <ul class="nav nav-tabs widget-categories-tabs" role="tablist" aria-label="Widget-Kategorien">
+        <li class="nav-item" *ngFor="let group of widgetGroups">
+          <a class="nav-link" [class.active]="activeGroup === group.id" (click)="setActiveGroup(group.id)"
+            [attr.aria-selected]="activeGroup === group.id" role="tab" [title]="group.label + ' Widgets anzeigen'"
+            [attr.aria-label]="group.label">
+            <div class="tab-content">
+              <i class="fa {{group.icon}}"></i>
+              <span class="group-label">{{group.label}}</span>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Verbesserte Widget-Auswahl mit größeren Cards -->
+    <div class="widget-types-container" aria-live="polite">
+      <div class="category-title">
+        <div class="d-flex justify-content-between align-items-center">
+          <h3>{{getActiveCategoryName()}}</h3>
+          <span class="category-badge">{{getWidgetsByGroup(activeGroup)?.length || 0}} verfügbar</span>
+        </div>
+        <p class="help-text">Klicken Sie auf ein Widget, um es in Ihren Inhalt einzufügen</p>
+      </div>
+
+      <div class="widget-types-grid">
+        <div class="widget-type-item" *ngFor="let widget of getWidgetsByGroup(activeGroup)"
+          (click)="selectWidget(widget.value)" [title]="widget.description || widget.label + ' Widget hinzufügen'"
+          tabindex="0" role="button" (keydown.enter)="selectWidget(widget.value)">
+          <div class="widget-type-content">
+            <div class="widget-type-icon">
+              <i class="fas {{widget.icon}}"></i>
+            </div>
+            <div class="widget-type-details">
+              <div class="widget-type-label">
+                {{widget.label}}
+              </div>
+              <div class="widget-type-description" *ngIf="widget.description">
+                {{widget.description}}
+              </div>
+            </div>
+            <div class="select-indicator">
+              <i class="fas fa-plus-circle"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="no-widgets-message" *ngIf="getWidgetsByGroup(activeGroup)?.length === 0">
+        <i class="fas fa-info-circle"></i>
+        <p>Keine Widgets in dieser Kategorie verfügbar.</p>
+      </div>
+    </div>
+
+    <!-- Footer mit Hilfestellung -->
+    <div class="modal-footer">
+      <p><i class="fas fa-lightbulb"></i> Tipp: Verwenden Sie die Tastatur (Tab und Enter) für schnellere Navigation</p>
+    </div>
+  </div>
+</div>

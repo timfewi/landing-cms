@@ -1,0 +1,255 @@
+<div class="preview-wrapper" [ngStyle]="previewWrapperStyles">
+  <div class="preview-container" [ngStyle]="previewContainerStyles">
+    <!-- Wenn keine Seite vorhanden ist, Platzhalter anzeigen -->
+    <div *ngIf="!page" class="no-page-preview">
+      <div class="empty-state">
+        <i class="fa fa-eye-slash fa-3x"></i>
+        <h3>Keine Vorschau verfügbar</h3>
+        <p>Bitte zuerst eine Seite laden oder erstellen.</p>
+      </div>
+    </div>
+
+    <!-- Wenn eine Seite vorhanden ist, diese rendern -->
+    <div *ngIf="page" class="page-preview">
+      <!-- Header-Bereich -->
+      <header class="preview-header">
+        <div class="page-title">{{ page.title || 'Unbenannte Seite' }}</div>
+      </header>
+
+      <!-- Keine Sektionen vorhanden - Dropzone anzeigen -->
+      <div *ngIf="!page.sections || page.sections.length === 0" class="empty-sections-container drop-zone" cdkDropList
+        [cdkDropListEnterPredicate]="dropListEnterPredicate" (cdkDropListDropped)="onDropSection($event)"
+        [cdkDropListData]="page.sections || []">
+        <div class="empty-state">
+          <i class="fa fa-puzzle-piece fa-3x"></i>
+          <h4>Keine Sektionen vorhanden</h4>
+          <p>Fügen Sie Sektionen hinzu, um mit dem Layout zu beginnen.</p>
+          <button class="add-section-btn" (click)="addNewSection()">
+            <i class="fa fa-plus-circle"></i> Sektion hinzufügen
+          </button>
+          <div class="drop-hint">
+            <i class="fa fa-arrow-down"></i> Oder ziehen Sie eine Sektion hierher
+          </div>
+        </div>
+      </div>
+
+      <!-- Sektionen durchlaufen und rendern -->
+      <div cdkDropList cdkDropListOrientation="vertical" (cdkDropListDropped)="onDropSectionReorder($event)"
+        [cdkDropListData]="page.sections" class="sections-container">
+        <div *ngFor="let section of page?.sections; let i = index" class="section-container" cdkDrag
+          [cdkDragData]="section"
+          [ngClass]="{'active-section': i === selectedSectionIndex && selectedWidgetIndex === -1}">
+
+          <!-- Custom Section Drag Preview -->
+          <div *cdkDragPreview class="section-preview cdk-drag-preview">
+            <div class="section-preview-header">
+              <i class="fa fa-layer-group"></i>
+              <span>{{ section.settings?.name || 'Section ' + (i + 1) }}</span>
+            </div>
+            <div class="section-preview-content">
+              <small>{{ section.widgets?.length || 0 }} widget(s)</small>
+            </div>
+          </div>
+
+          <!-- Custom Section Drag Placeholder -->
+          <div *cdkDragPlaceholder class="section-placeholder cdk-drag-placeholder">
+            <div class="placeholder-content">
+              <i class="fa fa-layer-group"></i>
+              <span>Drop section here</span>
+            </div>
+          </div>
+
+          <div class="section-drag-handle" cdkDragHandle title="Zum Verschieben ziehen">
+            <i class="fa fa-grip-vertical"></i>
+          </div>
+
+          <!-- Bereich-Kennzeichnung oben -->
+          <div class="section-indicator">
+            <span class="section-name" (click)="selectSection(i)">
+              <i class="fa fa-layer-group"></i>
+              {{ section.settings?.name || 'Section ' + (i + 1) }}
+            </span>
+
+            <!-- Aktionsbuttons für Bereich -->
+            <div class="section-actions">
+              <button class="action-btn edit-btn" (click)="selectSection(i)" title="Bereich bearbeiten">
+                <i class="fa fa-edit"></i>
+              </button>
+              <button class="action-btn clone-btn" (click)="cloneSection(i)" title="Bereich duplizieren">
+                <i class="fa fa-copy"></i>
+              </button>
+              <button class="action-btn delete-btn" (click)="deleteSection(i)" title="Bereich löschen">
+                <i class="fa fa-trash"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Widget-Container mit Drop-Bereich -->
+          <div class="widget-container-wrapper">
+            <!-- Widget-Liste mit Drop-Zone -->
+            <div class="widget-drop-container" cdkDropList [cdkDropListData]="section.widgets"
+              (cdkDropListDropped)="onDropWidgetInSection($event, i)"
+              [cdkDropListEnterPredicate]="dropListEnterPredicate">
+
+              <div class="section-content" cdkDropList [id]="'section-' + i" [cdkDropListData]="section.widgets || []"
+                (cdkDropListDropped)="onDropWidgetInSection($event, i)">
+
+                <!-- Keine Widgets vorhanden Anzeige mit Dropzone -->
+                <div *ngIf="!section.widgets || section.widgets.length === 0" class="empty-widgets-container drop-zone"
+                  cdkDropListEnterPredicate="dropListEnterPredicate">
+                  <div class="empty-state">
+                    <i class="fa fa-cubes fa-2x"></i>
+                    <h5>Keine Widgets in dieser Sektion</h5>
+                    <p>Fügen Sie Widgets hinzu, um Inhalte anzuzeigen.</p>
+                    <button class="add-widget-btn" (click)="addWidgetToSection(i)">
+                      <i class="fa fa-plus-circle"></i> Widget hinzufügen
+                    </button>
+                    <div class="drop-hint">
+                      <i class="fa fa-arrow-down"></i> Oder ziehen Sie ein Widget hierher
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Widgets durchlaufen und rendern -->
+                <div *ngFor="let widget of section.widgets; let j = index" class="preview-widget" cdkDrag
+                  [cdkDragData]="widget"
+                  [ngClass]="{'active-widget': i === selectedSectionIndex && j === selectedWidgetIndex, 'widget-container': true}"
+                  [class]="widget.settings?.cssClass">
+
+                  <!-- Custom Widget Drag Preview -->
+                  <div *cdkDragPreview class="preview-widget cdk-drag-preview">
+                    <div class="widget-preview-header">
+                      <i class="fa fa-cube"></i>
+                      <span>{{ getWidgetTypeLabel(widget.type) }}</span>
+                    </div>
+                    <div class="widget-preview-content">
+                      <small>{{ widget.settings?.name || 'Widget' }}</small>
+                    </div>
+                  </div>
+
+                  <!-- Custom Widget Drag Placeholder -->
+                  <div *cdkDragPlaceholder class="preview-widget cdk-drag-placeholder">
+                    <div class="placeholder-content">
+                      <i class="fa fa-cube"></i>
+                      <span>Drop here</span>
+                    </div>
+                  </div>
+
+                  <!-- Widget-Drag-Handle -->
+                  <div class="widget-drag-handle" cdkDragHandle title="Zum Verschieben ziehen">
+                    <i class="fa fa-grip-vertical"></i>
+                  </div>
+
+                  <!-- Widget-Kennzeichnung oben -->
+                  <div class="widget-indicator">
+                    <span class="widget-type" (click)="selectWidget(i, j)">
+                      <i class="fa fa-cube"></i>
+                      {{ getWidgetTypeLabel(widget.type) }}
+                    </span>
+                    <span *ngIf="widget.settings?.name" class="widget-name">{{ widget.settings?.name }}</span>
+
+                    <!-- Aktionsbuttons für Widget -->
+                    <div class="widget-actions">
+                      <button class="action-btn edit-btn" (click)="selectWidget(i, j)" title="Widget bearbeiten">
+                        <i class="fa fa-edit"></i>
+                      </button>
+                      <button class="action-btn clone-btn" (click)="cloneWidget(i, j)" title="Widget duplizieren">
+                        <i class="fa fa-copy"></i>
+                      </button>
+                      <button class="action-btn delete-btn" (click)="deleteWidget(i, j)" title="Widget löschen">
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Dynamisches Rendering je nach Widget-Typ -->
+                  <div class="widget-content" (click)="selectWidget(i, j)">
+                    <ng-container [ngSwitch]="widget.type">
+                      <!-- Überschrift -->
+                      <div *ngSwitchCase="'heading'" [ngClass]="'text-' + (widget.settings?.align || 'left')">
+                        <h1 *ngIf="widget.settings?.size === 'h1'">{{ widget.content?.text || 'Überschrift H1' }}</h1>
+                        <h2 *ngIf="widget.settings?.size === 'h2'">{{ widget.content?.text || 'Überschrift H2' }}</h2>
+                        <h3 *ngIf="widget.settings?.size === 'h3'">{{ widget.content?.text || 'Überschrift H3' }}</h3>
+                        <h4 *ngIf="widget.settings?.size === 'h4'">{{ widget.content?.text || 'Überschrift H4' }}</h4>
+                        <h5 *ngIf="widget.settings?.size === 'h5'">{{ widget.content?.text || 'Überschrift H5' }}</h5>
+                        <h6 *ngIf="widget.settings?.size === 'h6'">{{ widget.content?.text || 'Überschrift H6' }}</h6>
+                      </div>
+
+                      <!-- Text/Absatz -->
+                      <div *ngSwitchCase="'paragraph'" [ngClass]="'text-' + (widget.settings?.align || 'left')">
+                        <p>{{ widget.content?.text || 'Klicken Sie hier, um den Text zu bearbeiten' }}</p>
+                      </div>
+
+                      <!-- Einfacher Text -->
+                      <div *ngSwitchCase="'text'" [ngClass]="'text-' + (widget.settings?.align || 'left')">
+                        {{ widget.content?.text || 'Klicken Sie hier, um den Text zu bearbeiten' }}
+                      </div>
+
+                      <!-- Button -->
+                      <div *ngSwitchCase="'button'" [ngClass]="'text-' + (widget.settings?.align || 'center')">
+                        <button class="btn"
+                          [ngClass]="'btn-' + (widget.settings?.style || 'primary') + ' btn-' + (widget.settings?.size || 'medium')">
+                          {{ widget.content?.text || 'Button-Text' }}
+                        </button>
+                      </div>
+
+                      <!-- Bild -->
+                      <div *ngSwitchCase="'image'" [ngClass]="'text-' + (widget.settings?.align || 'center')">
+                        <img *ngIf="widget.content?.url" [src]="widget.content?.url" [alt]="widget.content?.alt || ''"
+                          [ngClass]="'img-' + (widget.settings?.size || 'medium')" [ngStyle]="{
+                                             'border-radius': widget.settings?.borderRadius,
+                                             'box-shadow': getShadowStyle(widget.settings?.shadow)
+                                           }">
+                        <div *ngIf="!widget.content?.url" class="image-placeholder">
+                          <i class="fa fa-image fa-2x"></i>
+                          <p>Bild hinzufügen</p>
+                        </div>
+                      </div>
+
+                      <!-- Trennlinie -->
+                      <div *ngSwitchCase="'divider'">
+                        <hr [ngClass]="widget.settings?.style || ''">
+                      </div>
+
+                      <!-- Abstand -->
+                      <div *ngSwitchCase="'spacer'" [ngStyle]="{ 'height': getSpacerHeight(widget.settings?.size) }">
+                        <div class="spacer-indicator">
+                          <i class="fa fa-arrows-alt-v"></i>
+                          <span>{{ getSpacerHeight(widget.settings?.size) }}</span>
+                        </div>
+                      </div>
+
+                      <!-- Weitere Widget-Typen können hier hinzugefügt werden -->
+
+                      <!-- Fallback für unbekannte Widget-Typen -->
+                      <div *ngSwitchDefault>
+                        <div class="unknown-widget">
+                          <span>Unbekannter Widget-Typ: {{ widget.type }}</span>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sektion-Fußzeile mit "Widget hinzufügen" Button -->
+          <div class="section-footer">
+            <button class="add-widget-btn" (click)="addWidgetToSection(i)" *ngIf="section.widgets?.length! > 0">
+              <i class="fa fa-plus-circle"></i> Weiteres Widget hinzufügen
+            </button>
+            <span class="section-end-label">Ende von Sektion {{ i + 1 }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Button zum Hinzufügen einer neuen Sektion am Ende -->
+      <div class="add-section-container" *ngIf="page.sections?.length! > 0">
+        <button class="add-section-btn" (click)="addNewSection()">
+          <i class="fa fa-plus-circle"></i> Neue Sektion hinzufügen
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

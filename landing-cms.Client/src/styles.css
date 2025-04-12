@@ -1,2 +1,362 @@
-/* You can add global styles to this file, and also import other style files */
-@import "tailwindcss";
+/* Globale CSS-Variablen für einheitliches Design */
+:root {
+  /* Monochromatische Farbpalette - nur Weiß, Grau, Schwarz */
+  --primary-color: #333333;      /* Hauptfarbe (Dunkelgrau) */
+  --primary-light: #555555;      /* Hellere Hauptfarbe */
+  --primary-dark: #222222;       /* Dunklere Hauptfarbe */
+  --secondary-color: #777777;    /* Sekundärfarbe (Mittelgrau) */
+  --secondary-light: #999999;    /* Hellere Sekundärfarbe */
+  --secondary-dark: #555555;     /* Dunklere Sekundärfarbe */
+  --success-color: #444444;      /* Erfolg (Grau) */
+  --info-color: #666666;         /* Info (Grau) */
+  --warning-color: #888888;      /* Warnung (Grau) */
+  --danger-color: #222222;       /* Gefahr (Dunkelgrau) */
+  --light-color: #f0f0f0;        /* Sehr helles Grau */
+  --dark-color: #222222;         /* Dunkles Grau */
+  --background-color: #f7f7f7;   /* Hintergrund */
+  --border-color: #dddddd;       /* Hellgrau für Ränder */
+  --card-bg-color: #ffffff;      /* Weiß für Kartenelemente */
+
+  /* Text-Farben */
+  --text-primary: #333333;       /* Haupttextfarbe */
+  --text-secondary: #666666;     /* Sekundärtextfarbe */
+  --text-muted: #999999;         /* Zurückgenommen */
+
+  /* Abstände */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-xxl: 3rem;
+
+  /* Schriften */
+  --font-family-base: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-size-base: 0.95rem;
+  --font-size-sm: 0.85rem;
+  --font-size-lg: 1.15rem;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-semibold: 500;
+  --font-weight-bold: 600;
+
+  /* 3D Schatten-Effekte */
+  --box-shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+  --box-shadow-sm: 0 2px 4px rgba(0,0,0,0.06);
+  --box-shadow: 0 3px 6px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06);
+  --box-shadow-md: 0 4px 8px rgba(0,0,0,0.09), 0 2px 4px rgba(0,0,0,0.06);
+  --box-shadow-lg: 0 8px 16px rgba(0,0,0,0.09), 0 4px 8px rgba(0,0,0,0.06);
+  --box-shadow-inset: inset 0 1px 2px rgba(0,0,0,0.06);
+
+  /* Subtle 3D Effekte */
+  --btn-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  --card-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 3px 8px rgba(0,0,0,0.03);
+  --panel-shadow: 0 2px 5px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+
+  /* Abrundungen */
+  --border-radius-sm: 0.2rem;
+  --border-radius: 0.25rem;
+  --border-radius-lg: 0.3rem;
+
+  /* Übergänge */
+  --transition-base: all 0.2s ease-in-out;
+  --transition-slow: all 0.3s ease-out;
+
+  /* Icons - SVG basierte Symbole für dezenteres Aussehen */
+  --icon-plus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='12' y1='5' x2='12' y2='19'%3E%3C/line%3E%3Cline x1='5' y1='12' x2='19' y2='12'%3E%3C/line%3E%3C/svg%3E");
+  --icon-edit: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z'%3E%3C/path%3E%3C/svg%3E");
+  --icon-copy: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='9' y='9' width='13' height='13' rx='2' ry='2'%3E%3C/rect%3E%3Cpath d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'%3E%3C/path%3E%3C/svg%3E");
+  --icon-trash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'%3E%3C/polyline%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'%3E%3C/path%3E%3C/svg%3E");
+  --icon-external-link: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6'%3E%3C/path%3E%3Cpolyline points='15 3 21 3 21 9'%3E%3C/polyline%3E%3Cline x1='10' y1='14' x2='21' y2='3'%3E%3C/line%3E%3C/svg%3E");
+  --icon-search: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
+  --icon-file: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'%3E%3C/path%3E%3Cpolyline points='14 2 14 8 20 8'%3E%3C/polyline%3E%3C/svg%3E");
+  --icon-warning: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z'%3E%3C/path%3E%3Cline x1='12' y1='9' x2='12' y2='13'%3E%3C/line%3E%3Cline x1='12' y1='17' x2='12.01' y2='17'%3E%3C/line%3E%3C/svg%3E");
+  --icon-sort: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+/* Basisstile */
+html, body {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--background-color);
+  margin: 0;
+  padding: 0;
+}
+
+/* Container für zentrierten Inhalt */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: var(--spacing-md);
+  padding-left: var(--spacing-md);
+}
+
+/* Überschriften */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  margin-bottom: var(--spacing-md);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+h1 { font-size: 2.2rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.25rem; }
+h5 { font-size: 1.1rem; }
+h6 { font-size: 0.95rem; }
+
+/* Links */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: var(--transition-base);
+}
+
+a:hover {
+  color: var(--primary-light);
+  text-decoration: underline;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  font-weight: var(--font-weight-normal);
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: 0.5rem 1rem;
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  border-radius: var(--border-radius);
+  transition: var(--transition-base);
+  cursor: pointer;
+  box-shadow: var(--btn-shadow);
+  position: relative;
+  top: 0;
+}
+
+.btn:hover {
+  box-shadow: var(--box-shadow-sm);
+  top: -1px;
+}
+
+.btn:active {
+  box-shadow: var(--box-shadow-xs);
+  top: 0;
+}
+
+.btn-primary {
+  color: white;
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+.btn-secondary {
+  color: white;
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.btn-secondary:hover {
+  background-color: var(--secondary-dark);
+  border-color: var(--secondary-dark);
+}
+
+/* Formulare */
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: white;
+  background-clip: padding-box;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  transition: var(--transition-base);
+  box-shadow: var(--box-shadow-inset);
+}
+
+.form-control:focus {
+  color: var(--text-primary);
+  background-color: white;
+  border-color: var(--primary-light);
+  outline: 0;
+  box-shadow: var(--box-shadow-inset), 0 0 0 0.2rem rgba(51, 51, 51, 0.15);
+}
+
+/* Hilfklassen */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-left { text-align: left; }
+
+.mt-1 { margin-top: var(--spacing-sm); }
+.mt-2 { margin-top: var(--spacing-md); }
+.mt-3 { margin-top: var(--spacing-lg); }
+.mt-4 { margin-top: var(--spacing-xl); }
+.mt-5 { margin-top: var(--spacing-xxl); }
+
+.mb-1 { margin-bottom: var(--spacing-sm); }
+.mb-2 { margin-bottom: var(--spacing-md); }
+.mb-3 { margin-bottom: var(--spacing-lg); }
+.mb-4 { margin-bottom: var(--spacing-xl); }
+.mb-5 { margin-bottom: var(--spacing-xxl); }
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Admin-Bereich Stile */
+.admin-section {
+  background-color: var(--card-bg-color);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-lg);
+  box-shadow: var(--panel-shadow);
+  border: 1px solid var(--border-color);
+}
+
+/* Karten für Inhaltsblöcke */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: var(--card-bg-color);
+  background-clip: border-box;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+}
+
+.card-header {
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 0;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid var(--border-color);
+  font-weight: var(--font-weight-semibold);
+}
+
+.card-body {
+  flex: 1 1 auto;
+  padding: 1.25rem;
+}
+
+.card-footer {
+  padding: 0.75rem 1.25rem;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-top: 1px solid var(--border-color);
+}
+
+/* Badges für Status-Anzeigen */
+.badge {
+  display: inline-block;
+  padding: 0.35em 0.65em;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--box-shadow-xs);
+}
+
+.badge-primary { background-color: var(--primary-color); color: white; }
+.badge-secondary { background-color: var(--secondary-color); color: white; }
+.badge-success { background-color: var(--success-color); color: white; }
+.badge-danger { background-color: var(--danger-color); color: white; }
+.badge-warning {
+  background-color: var(--warning-color);
+  color: white;
+}
+.badge-info {
+  background-color: var(--info-color);
+  color: white;
+}
+
+/* Spinner für Ladeanzeigen */
+.spinner {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  border: 0.25rem solid rgba(51, 51, 51, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--primary-color);
+  animation: spin 1s linear infinite;
+  box-shadow: var(--box-shadow-xs);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl) 0;
+}
+
+/* Modal Backdrop Styling */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1040;
+  backdrop-filter: blur(1px);
+}
+
+/* Monochromatische Anpassungen für Alert-Komponenten */
+.alert {
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md) var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+  border: 1px solid transparent;
+}
+
+.alert-danger {
+  background-color: #f8f8f8;
+  border-color: #dddddd;
+  color: #333333;
+}
+
+.alert-success {
+  background-color: #f0f0f0;
+  border-color: #dddddd;
+  color: #333333;
+}
+
+.alert-warning {
+  background-color: #f5f5f5;
+  border-color: #dddddd;
+  color: #333333;
+}
+
+.alert-info {
+  background-color: #f2f2f2;
+  border-color: #dddddd;
+  color: #333333;
+}

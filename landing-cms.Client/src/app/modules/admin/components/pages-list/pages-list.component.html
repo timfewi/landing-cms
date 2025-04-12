@@ -1,0 +1,172 @@
+<div class="pages-list-container">
+  <div class="dashboard-header">
+    <h1>Landing Pages</h1>
+    <button class="btn btn-primary" routerLink="/admin/pages/new">
+      <i class="icon-plus"></i> Neue Landing Page
+    </button>
+  </div>
+
+  <!-- Ladeindikator -->
+  <div *ngIf="isLoading" class="loading">
+    <div class="spinner"></div>
+    <p>Lade Landing Pages...</p>
+  </div>
+
+  <!-- Fehlermeldung -->
+  <div *ngIf="errorMessage && !isLoading" class="alert alert-danger">
+    <span class="icon-warning"></span>
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <!-- Tabellen-Container -->
+  <div *ngIf="!isLoading && !errorMessage" class="card">
+    <div class="card-header">
+      <div class="search-filter-container">
+        <h5>Verwalte deine Landing Pages</h5>
+        <div class="filter-controls">
+          <!-- Suchfeld -->
+          <div class="search-container">
+            <input type="text" class="form-control" placeholder="Suche..." [(ngModel)]="searchText">
+            <span class="icon-search"></span>
+          </div>
+
+          <!-- Status-Filter -->
+          <div class="status-filter">
+            <select class="form-control" [(ngModel)]="statusFilter">
+              <option [ngValue]="null">Alle Status</option>
+              <option [ngValue]="true">Veröffentlicht</option>
+              <option [ngValue]="false">Entwurf</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabelle -->
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th (click)="sortPages('title')" class="sortable">
+              Titel <span class="sort-icon">{{ getSortIcon('title') }}</span>
+            </th>
+            <th (click)="sortPages('slug')" class="sortable">
+              URL <span class="sort-icon">{{ getSortIcon('slug') }}</span>
+            </th>
+            <th (click)="sortPages('isPublished')" class="sortable">
+              Status <span class="sort-icon">{{ getSortIcon('isPublished') }}</span>
+            </th>
+            <th (click)="sortPages('lastModifiedDate')" class="sortable">
+              Letzte Änderung <span class="sort-icon">{{ getSortIcon('lastModifiedDate') }}</span>
+            </th>
+            <th>Aktionen</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let page of paginatedPages" [attr.id]="'page-row-' + page.id"
+            [class.highlighted-row]="isHighlightedPage(page.id)">
+            <td data-label="Titel">
+              <div class="page-title">
+                {{ page.title }}
+                <span *ngIf="isHighlightedPage(page.id)" class="last-edited-badge">Zuletzt bearbeitet</span>
+              </div>
+            </td>
+            <td data-label="URL">
+              <a [routerLink]="['/page', page.slug]" class="page-url">
+                /page/{{ page.slug }}
+                <span class="icon-external-link"></span>
+              </a>
+            </td>
+            <td data-label="Status">
+              <span class="badge" [ngClass]="getStatusClass(page.isPublished)">
+                {{ getStatusLabel(page.isPublished) }}
+              </span>
+            </td>
+            <td data-label="Letzte Änderung">{{ page.lastModifiedDate | date:'dd.MM.yyyy, HH:mm' }}</td>
+            <td data-label="Aktionen">
+              <div class="actions">
+                <button class="btn btn-sm btn-outline-primary" title="Bearbeiten"
+                  [routerLink]="['/admin/pages/edit', page.id]">
+                  <span class="icon-edit"></span>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" title="Duplizieren" (click)="duplicatePage(page)">
+                  <span class="icon-copy"></span>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" title="Löschen" (click)="deletePage(page)">
+                  <span class="icon-trash"></span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Leere Tabelle Anzeige -->
+    <div *ngIf="filteredPages.length === 0" class="empty-state">
+      <span class="icon-file"></span>
+      <h4>Keine Landing Pages gefunden</h4>
+      <p class="text-secondary">
+        {{ searchText || statusFilter !== null ? 'Keine Seiten entsprechen deinen Suchkriterien.' : 'Erstelle deine
+        erste Landing Page, um loszulegen.' }}
+      </p>
+      <button *ngIf="!searchText && statusFilter === null" class="btn btn-primary" routerLink="/admin/pages/new">
+        Erste Landing Page erstellen
+      </button>
+      <button *ngIf="searchText || statusFilter !== null" class="btn btn-secondary"
+        (click)="searchText = ''; statusFilter = null">
+        Filter zurücksetzen
+      </button>
+    </div>
+
+    <!-- Paginierung -->
+    <div class="pagination-container" *ngIf="filteredPages.length > 0">
+      <div class="pagination-info">
+        Anzeige {{ (currentPage - 1) * pageSize + 1 }} bis {{ getMaxPageItem() }} von {{ filteredPages.length }}
+        Einträgen
+      </div>
+      <nav aria-label="Page navigation">
+        <ul class="pagination">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <a class="page-link" href="javascript:void(0)" (click)="prevPage()">Zurück</a>
+          </li>
+          <li class="page-item" *ngFor="let page of getPageNumbers()" [class.active]="currentPage === page">
+            <a class="page-link" href="javascript:void(0)" (click)="setPage(page)">{{ page }}</a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <a class="page-link" href="javascript:void(0)" (click)="nextPage()">Weiter</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Lösch-Bestätigungsdialog -->
+  <div class="modal-backdrop" *ngIf="showDeleteModal"></div>
+  <div class="modal" *ngIf="showDeleteModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Seite löschen</h5>
+          <button type="button" class="close" (click)="cancelDelete()">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Möchtest du die Seite "{{ pageToDelete?.title }}" wirklich löschen? Diese Aktion kann nicht rückgängig
+            gemacht werden.</p>
+          <div *ngIf="isDeleting" class="text-center">
+            <div class="spinner small"></div>
+            <p>Lösche Seite...</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="cancelDelete()"
+            [disabled]="isDeleting">Abbrechen</button>
+          <button type="button" class="btn btn-danger" (click)="confirmDelete()"
+            [disabled]="isDeleting">Löschen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

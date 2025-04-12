@@ -1,0 +1,67 @@
+<div class="section-editor" *ngIf="sectionForm">
+  <div class="section-editor-header">
+    <h4>Sektion bearbeiten</h4>
+    <div class="section-editor-actions">
+      <button type="button" class="btn btn-sm btn-outline-secondary" (click)="duplicateSection()"
+        title="Sektion duplizieren">
+        <i class="fa fa-copy"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="section-editor-content" [formGroup]="sectionForm">
+    <!-- Basis-Informationen -->
+    <div class="form-group">
+      <label for="section-title">Titel</label>
+      <input type="text" id="section-title" class="form-control" formControlName="title" placeholder="Sektions-Titel">
+    </div>
+
+    <div class="form-group">
+      <label for="section-type">Typ</label>
+      <select id="section-type" class="form-control" formControlName="type">
+        <option *ngFor="let type of sectionTypes" [value]="type.value">{{type.label}}</option>
+      </select>
+    </div>
+
+    <!-- Erweiterte Einstellungen -->
+    <div class="section-settings" formGroupName="settings">
+      <h5>Einstellungen</h5>
+
+      <div class="form-group">
+        <label for="section-background">Hintergrund</label>
+        <select id="section-background" class="form-control" formControlName="background">
+          <option *ngFor="let bg of backgroundOptions" [value]="bg.value">
+            <i class="fas {{bg.icon}}"></i> {{bg.label}}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="section-padding">Innenabstand</label>
+        <select id="section-padding" class="form-control" formControlName="padding">
+          <option *ngFor="let padding of paddingOptions" [value]="padding.value">{{padding.label}}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="section-text-color">Textfarbe</label>
+        <input type="color" id="section-text-color" class="form-control" formControlName="textColor">
+      </div>
+
+      <div class="form-check">
+        <input type="checkbox" id="section-full-width" class="form-check-input" formControlName="fullWidth">
+        <label class="form-check-label" for="section-full-width">Volle Breite</label>
+      </div>
+    </div>
+
+    <!-- Widget-Liste -->
+    <div class="widgets-container">
+      <h5>Widgets</h5>
+      <app-widget-list [sectionIndex]="sectionIndex"></app-widget-list>
+    </div>
+  </div>
+</div>
+
+<div class="section-editor-empty" *ngIf="!sectionForm">
+  <p>Bitte wählen Sie eine Sektion aus, um sie zu bearbeiten.</p>
+</div>

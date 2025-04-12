@@ -1,0 +1,56 @@
+<section [id]="section.id" class="page-section" [ngClass]="'section-type-' + section.type">
+  <div class="section-container">
+    <div [ngSwitch]="section.type">
+      <!-- Hero Section -->
+      <div *ngSwitchCase="'hero'" class="hero-section">
+        <div class="hero-content">
+          <ng-container *ngFor="let widget of section.widgets | sortByOrder">
+            <app-widget-renderer [widget]="widget"></app-widget-renderer>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Features Section -->
+      <div *ngSwitchCase="'features'" class="features-section">
+        <div class="features-header">
+          <app-widget-renderer *ngIf="section.widgets[0]" [widget]="section.widgets[0]"></app-widget-renderer>
+        </div>
+        <div class="features-grid">
+          <ng-container *ngFor="let widget of (section.widgets | sortByOrder).slice(1)">
+            <app-widget-renderer [widget]="widget"></app-widget-renderer>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Contact Section -->
+      <div *ngSwitchCase="'contact'" class="contact-section">
+        <div class="contact-content">
+          <ng-container *ngFor="let widget of section.widgets | sortByOrder">
+            <app-widget-renderer [widget]="widget"></app-widget-renderer>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Showcase Section -->
+      <div *ngSwitchCase="'showcase'" class="showcase-section">
+        <div class="showcase-content">
+          <ng-container *ngFor="let widget of section.widgets | sortByOrder">
+            <app-widget-renderer [widget]="widget"></app-widget-renderer>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Default Section -->
+      <div *ngSwitchDefault class="default-section">
+        <div class="section-title" *ngIf="section.title">
+          <h2>{{section.title}}</h2>
+        </div>
+        <div class="widgets-container">
+          <ng-container *ngFor="let widget of section.widgets | sortByOrder">
+            <app-widget-renderer [widget]="widget"></app-widget-renderer>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

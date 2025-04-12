@@ -1,0 +1,22 @@
+<div class="device-preview-controls">
+  <div class="preview-toolbar">
+    <!-- Gerätetyp-Auswahl -->
+    <div class="device-buttons">
+      <button *ngFor="let device of devices" type="button" class="btn" [class.btn-primary]="mode === device.id"
+        [class.btn-outline-secondary]="mode !== device.id" (click)="changeMode($any(device.id))">
+        <i class="fa {{device.icon}}"></i>
+        <span>{{device.label}}</span>
+      </button>
+    </div>
+
+    <!-- Zoom-Steuerung -->
+    <div class="zoom-controls">
+      <div class="input-group">
+        <span class="input-group-text">Zoom</span>
+        <select class="form-select" [value]="scale" (change)="changeScale($any($event.target).value)">
+          <option *ngFor="let zoom of zoomLevels" [value]="zoom.value">{{zoom.label}}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>

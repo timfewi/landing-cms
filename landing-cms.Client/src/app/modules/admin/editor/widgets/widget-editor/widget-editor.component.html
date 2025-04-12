@@ -1,0 +1,218 @@
+<div class="widget-editor" *ngIf="widgetForm">
+    <div class="widget-editor-content" [formGroup]="widgetForm">
+        <!-- Widget-Typ Auswahl -->
+        <div class="form-group">
+            <label for="widget-type">Widget-Typ</label>
+            <select id="widget-type" class="form-control" [value]="widgetType"
+                (change)="changeWidgetType($any($event.target).value)">
+                <option value="heading">Überschrift</option>
+                <option value="paragraph">Textabsatz</option>
+                <option value="text">Text</option>
+                <option value="image">Bild</option>
+                <option value="button">Button</option>
+                <option value="divider">Trennlinie</option>
+                <option value="spacer">Abstand</option>
+            </select>
+        </div>
+
+        <!-- Dynamische Inhalte basierend auf Widget-Typ -->
+        <div class="widget-content-editor">
+            <h5>Inhalt</h5>
+
+            <!-- Überschrift-Widget -->
+            <div *ngIf="widgetType === 'heading'" class="heading-editor">
+                <div class="form-group">
+                    <label for="heading-text">Überschrift-Text</label>
+                    <input type="text" id="heading-text" class="form-control" [value]="getContentValue('text')"
+                        (input)="updateContentValue('text', $event.target)">
+                </div>
+
+                <div class="form-group">
+                    <label for="heading-size-group">Größe</label>
+                    <div class="btn-group" id="heading-size-group">
+                        <button *ngFor="let size of headingSizeOptions" type="button" class="btn btn-sm"
+                            [class.btn-primary]="getSettingsValue('size') === size.value"
+                            [class.btn-outline-secondary]="getSettingsValue('size') !== size.value"
+                            (click)="updateSettingsValue('size', size.value)">
+                            {{size.label}}
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="heading-align-group">Ausrichtung</label>
+                    <div class="btn-group" id="heading-align-group">
+                        <button *ngFor="let align of textAlignOptions" type="button" class="btn btn-sm"
+                            [class.btn-primary]="getSettingsValue('align') === align.value"
+                            [class.btn-outline-secondary]="getSettingsValue('align') !== align.value"
+                            (click)="updateSettingsValue('align', align.value)">
+                            <i class="fa {{align.icon}}"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Textabsatz-Widget -->
+            <div *ngIf="widgetType === 'paragraph'" class="paragraph-editor">
+                <div class="form-group">
+                    <label for="paragraph-text">Text</label>
+                    <textarea id="paragraph-text" class="form-control" rows="5" [value]="getContentValue('text')"
+                        (input)="updateContentValue('text', $event.target)"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label [for]="'paragraph-align-' + 0">Ausrichtung</label>
+                    <div class="btn-group">
+                        <button *ngFor="let align of textAlignOptions; let i = index" type="button" class="btn btn-sm"
+                            [id]="'paragraph-align-' + i"
+                            [class.btn-primary]="getSettingsValue('align') === align.value"
+                            [class.btn-outline-secondary]="getSettingsValue('align') !== align.value"
+                            (click)="updateSettingsValue('align', align.value)">
+                            <i class="fas {{align.icon}}"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bild-Widget -->
+            <div *ngIf="widgetType === 'image'" class="image-editor">
+                <div class="form-group">
+                    <label for="image-url">Bild-URL</label>
+                    <input type="text" id="image-url" class="form-control" [value]="getContentValue('url')"
+                        (input)="updateContentValue('url', $event.target)">
+                </div>
+
+                <div class="form-group">
+                    <label for="image-alt">Alt-Text</label>
+                    <input type="text" id="image-alt" class="form-control" [value]="getContentValue('alt')"
+                        (input)="updateContentValue('alt', $event.target)">
+                </div>
+
+                <div class="form-group">
+                    <label for="image-size">Größe</label>
+                    <select id="image-size" class="form-control" [value]="getSettingsValue('size')"
+                        (change)="updateSettingsValue('size', $event.target)">
+                        <option *ngFor="let size of imageSizeOptions" [value]="size.value">{{size.label}}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="image-shadow">Schatten</label>
+                    <select id="image-shadow" class="form-control" [value]="getSettingsValue('shadow')"
+                        (change)="updateSettingsValue('shadow', $event.target)">
+                        <option *ngFor="let shadow of shadowOptions" [value]="shadow.value">{{shadow.label}}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="image-border-radius">Abrundung</label>
+                    <input type="text" id="image-border-radius" class="form-control"
+                        [value]="getSettingsValue('borderRadius')"
+                        (input)="updateSettingsValue('borderRadius', $event.target)">
+                </div>
+            </div>
+
+            <!-- Button-Widget -->
+            <div *ngIf="widgetType === 'button'" class="button-editor">
+                <div class="form-group">
+                    <label for="button-text">Button-Text</label>
+                    <input type="text" id="button-text" class="form-control" [value]="getContentValue('text')"
+                        (input)="updateContentValue('text', $event.target)">
+                </div>
+
+                <div class="form-group">
+                    <label for="button-link">Link</label>
+                    <input type="text" id="button-link" class="form-control" [value]="getContentValue('link')"
+                        (input)="updateContentValue('link', $event.target)">
+                </div>
+
+                <div class="form-group">
+                    <label for="button-style">Stil</label>
+                    <select id="button-style" class="form-control" [value]="getSettingsValue('style')"
+                        (change)="updateSettingsValue('style', $event.target)">
+                        <option *ngFor="let style of buttonStyleOptions" [value]="style.value">{{style.label}}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="button-size">Größe</label>
+                    <select id="button-size" class="form-control" [value]="getSettingsValue('size')"
+                        (change)="updateSettingsValue('size', $event.target)">
+                        <option *ngFor="let size of buttonSizeOptions" [value]="size.value">{{size.label}}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="button-target">Ziel</label>
+                    <select id="button-target" class="form-control" [value]="getSettingsValue('target')"
+                        (change)="updateSettingsValue('target', $event.target)">
+                        <option *ngFor="let target of buttonTargetOptions" [value]="target.value">{{target.label}}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="button-icon">Icon (FontAwesome CSS-Klasse)</label>
+                    <input type="text" id="button-icon" class="form-control" [value]="getSettingsValue('icon')"
+                        (input)="updateSettingsValue('icon', $event.target)" placeholder="z.B. fa-arrow-right">
+                </div>
+            </div>
+
+            <!-- Abstand-Widget -->
+            <div *ngIf="widgetType === 'spacer'" class="spacer-editor">
+                <div class="form-group">
+                    <label for="spacer-height">Höhe</label>
+                    <input type="text" id="spacer-height" class="form-control" [value]="getSettingsValue('height')"
+                        (input)="updateSettingsValue('height', $event.target)" placeholder="z.B. 50px oder 2rem">
+                </div>
+            </div>
+
+            <!-- Trennlinie-Widget -->
+            <div *ngIf="widgetType === 'divider'" class="divider-editor">
+                <div class="form-group">
+                    <label for="divider-color">Farbe</label>
+                    <input type="color" id="divider-color" class="form-control" [value]="getSettingsValue('color')"
+                        (input)="updateSettingsValue('color', $event.target)">
+                </div>
+
+                <div class="form-group">
+                    <label for="divider-thickness">Dicke</label>
+                    <input type="text" id="divider-thickness" class="form-control"
+                        [value]="getSettingsValue('thickness')"
+                        (input)="updateSettingsValue('thickness', $event.target)"
+                        placeholder="z.B. 1px oder 0.1rem">
+                </div>
+
+                <div class="form-group">
+                    <label for="divider-width">Breite</label>
+                    <input type="text" id="divider-width" class="form-control" [value]="getSettingsValue('width')"
+                        (input)="updateSettingsValue('width', $event.target)" placeholder="z.B. 100% oder 200px">
+                </div>
+            </div>
+        </div>
+
+        <!-- Erweiterte Widget-Einstellungen -->
+        <div class="widget-settings-editor" formGroupName="settings">
+            <h5>Erweiterte Einstellungen</h5>
+
+            <div class="form-group">
+                <label for="widget-css-class">CSS-Klasse</label>
+                <input type="text" id="widget-css-class" class="form-control" formControlName="cssClass">
+            </div>
+
+            <div class="form-group">
+                <label for="widget-margin">Außenabstand</label>
+                <select id="widget-margin" class="form-control" formControlName="margin">
+                    <option value="none">Kein Abstand</option>
+                    <option value="small">Klein</option>
+                    <option value="normal">Normal</option>
+                    <option value="large">Groß</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="widget-editor-empty" *ngIf="!widgetForm">
+    <p>Bitte wählen Sie ein Widget aus, um es zu bearbeiten.</p>
+</div>

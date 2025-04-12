@@ -1,0 +1,71 @@
+<div class="widgets-list-container">
+  <div [cdkDropListData]="widgets.controls" cdkDropList (cdkDropListDropped)="onWidgetDrop($event)">
+    <!-- Keine Widgets-Hinweis -->
+    <div *ngIf="widgets.length === 0" class="no-widgets-message">
+      <p>Diese Sektion enthält keine Widgets. Klicke auf "Widget hinzufügen", um zu beginnen.</p>
+    </div>
+
+    <!-- Widgets -->
+    <div *ngFor="let widget of widgets.controls; let widgetIndex = index" class="widget-item" [formGroup]="$any(widget)"
+      cdkDrag [class.active]="selectedWidgetIndex === widgetIndex">
+      <!-- Widget Header -->
+      <div class="widget-header">
+        <div class="drag-handle" cdkDragHandle>
+          <i class="fa fa-grip-lines"></i>
+        </div>
+
+        <div class="widget-title" (click)="toggleWidgetCollapsed(widgetIndex)">
+          <i class="fas" [class.fa-caret-down]="!widgetCollapsed[widgetIndex]"
+            [class.fa-caret-right]="widgetCollapsed[widgetIndex]"></i>
+          <span>{{getWidgetTypeLabel(widget.get('type')?.value)}}</span>
+        </div>
+
+        <div class="widget-actions">
+          <button type="button" class="btn btn-sm btn-outline-primary" (click)="selectWidget(widgetIndex)"
+            title="Widget bearbeiten">
+            <i class="fa fa-edit"></i>
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteWidget(widgetIndex)"
+            title="Widget löschen">
+            <i class="fa fa-trash"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Widget Inhalt (ausklappbar) -->
+      <div class="widget-content" [class.collapsed]="widgetCollapsed[widgetIndex]">
+        <!-- Wenn Widget ausgewählt ist, Widget-Editor anzeigen -->
+        <app-widget-editor *ngIf="selectedWidgetIndex === widgetIndex" [sectionIndex]="sectionIndex"
+          [widgetIndex]="widgetIndex">
+        </app-widget-editor>
+      </div>
+    </div>
+  </div>
+
+  <!-- Widget hinzufügen Button -->
+  <div class="add-widget-container">
+    <button type="button" class="btn btn-primary widget-add-button" (click)="toggleWidgetMenu()"
+      [class.active]="widgetMenuOpen">
+      <i class="fa fa-plus"></i> Widget hinzufügen
+    </button>
+
+    <!-- Widget-Typen Menü als modaler Dialog -->
+    <div class="modal-backdrop" *ngIf="widgetMenuOpen" (click)="closeWidgetMenuOnBackdropClick($event)"
+      [@menuAnimation]>
+      <div class="widget-menu">
+        <div class="widget-menu-header">
+          <h6>Widget-Typ wählen</h6>
+          <button type="button" class="btn-close" aria-label="Close" (click)="toggleWidgetMenu()"></button>
+        </div>
+        <div class="widget-menu-content">
+          <!-- Nach Kategorien gruppierte Widget-Typen -->
+          <div class="widget-categories-tabs">
+            <app-widget-categories [widgetGroups]="widgetGroups" [widgetTypes]="widgetTypes"
+              (widgetSelected)="addWidget($event)">
+            </app-widget-categories>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,59 @@
+<div class="sections-container">
+  <div cdkDropList (cdkDropListDropped)="onSectionDrop($event)">
+    <!-- No sections message -->
+    <div *ngIf="sections.length === 0" class="no-sections-message">
+      <p>Es wurden noch keine Sektionen hinzugefügt. Klicke auf "Sektion hinzufügen", um zu beginnen.</p>
+    </div>
+
+    <!-- Sections -->
+    <div *ngFor="let section of sections.controls; let sectionIndex = index" class="section-item"
+      [formGroup]="$any(section)" cdkDrag [class.active]="selectedSectionIndex === sectionIndex">
+      <!-- Section header -->
+      <div class="section-header">
+        <div class="drag-handle" cdkDragHandle>
+          <i class="fa {{getSectionIcon(section.get('type')?.value)}}"></i>
+        </div>
+
+        <div class="section-title" (click)="toggleSectionCollapsed(sectionIndex)">
+          <i class="fa" [class.fa-caret-down]="!sectionCollapsed[sectionIndex]"
+            [class.fa-caret-right]="sectionCollapsed[sectionIndex]"></i>
+          <span>{{section.get('title')?.value || 'Unbenannte Sektion'}}</span>
+        </div>
+
+        <div class="section-actions">
+          <button type="button" class="btn btn-sm btn-outline-primary" (click)="selectSection(sectionIndex)">
+            <i class="fa fa-edit"></i>
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteSection(sectionIndex)">
+            <i class="fa fa-trash"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Section content (collapsible) -->
+      <div class="section-content" [class.collapsed]="sectionCollapsed[sectionIndex]">
+        <app-section-editor [sectionIndex]="sectionIndex"
+          *ngIf="selectedSectionIndex === sectionIndex"></app-section-editor>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add section button -->
+  <div class="add-section-container">
+    <button type="button" class="btn btn-primary" (click)="toggleSectionMenu()">
+      <i class="fa fa-plus"></i> Sektion hinzufügen
+    </button>
+
+    <!-- Section type menu (dropdown) -->
+    <div class="section-menu" *ngIf="sectionMenuOpen">
+      <div class="section-menu-content">
+        <h6>Sektions-Typ wählen</h6>
+        <ul class="section-type-list">
+          <li *ngFor="let type of sectionTypes" (click)="addSection(type.value)">
+            <i class="fa {{type.icon}}"></i> {{type.label}}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

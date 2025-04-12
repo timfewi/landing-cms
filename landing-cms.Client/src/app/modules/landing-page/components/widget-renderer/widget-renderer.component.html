@@ -1,0 +1,45 @@
+<div class="widget" [ngClass]="['widget-type-' + widget.type, 'widget-align-' + widget.settings?.align]">
+  <div [ngSwitch]="widget.type">
+    <!-- Heading Widget -->
+    <div *ngSwitchCase="'heading'" class="heading-widget">
+      <h1 *ngIf="widget.settings?.size === 'large'" [ngClass]="'text-' + widget.settings?.align">{{ widget.content.text
+        }}</h1>
+      <h2 *ngIf="widget.settings?.size === 'medium'" [ngClass]="'text-' + widget.settings?.align">{{ widget.content.text
+        }}</h2>
+      <h3 *ngIf="widget.settings?.size === 'small' || !widget.settings?.size"
+        [ngClass]="'text-' + widget.settings?.align">{{ widget.content.text }}</h3>
+    </div>
+
+    <!-- Paragraph Widget -->
+    <div *ngSwitchCase="'paragraph'" class="paragraph-widget">
+      <p [ngClass]="'text-' + widget.settings?.align">{{ widget.content.text }}</p>
+    </div>
+
+    <!-- Button Widget -->
+    <div *ngSwitchCase="'button'" class="button-widget" [ngClass]="'text-' + widget.settings?.align">
+      <a [href]="widget.content.link" class="btn"
+        [ngClass]="['btn-' + widget.settings?.style, 'btn-' + widget.settings?.size]">
+        {{ widget.content.text }}
+      </a>
+    </div>
+
+    <!-- Image Widget -->
+    <div *ngSwitchCase="'image'" class="image-widget" [ngClass]="'image-' + widget.settings?.size">
+      <img [src]="widget.content.url" [alt]="widget.content.alt || ''" />
+    </div>
+
+    <!-- Feature Item Widget -->
+    <div *ngSwitchCase="'feature-item'" class="feature-item-widget">
+      <div class="feature-icon">
+        <i class="fas" [ngClass]="widget.content.icon"></i>
+      </div>
+      <h3 class="feature-title">{{ widget.content.title }}</h3>
+      <p class="feature-description">{{ widget.content.description }}</p>
+    </div>
+
+    <!-- Default Widget -->
+    <div *ngSwitchDefault class="unknown-widget">
+      <p>Widget-Typ nicht unterstützt: {{ widget.type }}</p>
+    </div>
+  </div>
+</div>
